@@ -19,9 +19,12 @@ class FilterEntries extends Transform {
             cb();
         } else {
             if (entry.isDirectory) {
-                if (!existsSync(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`)){
-                    mkdirSync(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`, {recursive: true});
+                const directoryFullPath =`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`;
+
+                if (!existsSync(directoryFullPath)){
+                    mkdirSync(directoryFullPath, {recursive: true});
                 } 
+
                 cb();
             } else {
                 entry.pipe(createWriteStream(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`)).on('finish',cb);
