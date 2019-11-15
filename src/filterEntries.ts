@@ -1,5 +1,6 @@
 import { Transform } from 'stream';
 import { createWriteStream, mkdirSync, existsSync } from 'fs';
+import CONSTANTS from './constants';
 
 class FilterEntries extends Transform {
     constructor() {
@@ -18,12 +19,12 @@ class FilterEntries extends Transform {
             cb();
         } else {
             if (entry.isDirectory) {
-                if (!existsSync(`./_temp/${entry.path}`)){
-                    mkdirSync(`./_temp/${entry.path}`, {recursive: true});
+                if (!existsSync(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`)){
+                    mkdirSync(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`, {recursive: true});
                 } 
                 cb();
             } else {
-                entry.pipe(createWriteStream(`./_temp/${entry.path}`)).on('finish',cb);
+                entry.pipe(createWriteStream(`${CONSTANTS.TEMP_FOLDER_PATH}/${entry.path}`)).on('finish',cb);
             }
         }
     }

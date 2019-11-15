@@ -5,8 +5,7 @@ import { config, S3 } from 'aws-sdk';
 import FilterEntries from './src/filterEntries';
 import zipDirectory from './src/zipDirectory';
 import rimrafAsync from './utils/rimrafAsync';
-
-const FILE_KEY = 'archive.zip';
+import CONSTANTS from './src/constants';
 
 config.update(
   {
@@ -17,10 +16,6 @@ config.update(
 );
 
 const s3 = new S3();
-const options = {
-    Bucket: 'test-task-bucket-1',
-    Key: FILE_KEY,
-};
 
 const uploadToMultipleBuckets = (bucketsNames, filePath) => {
   const promises = bucketsNames.map((name) => {
@@ -28,7 +23,7 @@ const uploadToMultipleBuckets = (bucketsNames, filePath) => {
       s3.upload({
         Bucket: name,
         Body: createReadStream(filePath),
-        Key: FILE_KEY
+        Key: CONSTANTS.FILE_KEY
       }, (err, data) => err == null ? resolve(data) : reject(err));
     });
   })
@@ -38,7 +33,10 @@ const uploadToMultipleBuckets = (bucketsNames, filePath) => {
 
 const saveFilteredEntries = () => {
   return new Promise((resolve, reject) => {
-    s3.getObject(options)
+    s3.getObject({
+      Bucket: CONSTANTS.FIRST_BUCKET_NAME,
+      Key: CONSTANTS.FILE_KEY,
+    })
     .createReadStream()
     .pipe(Parse())
     .pipe(new FilterEntries())
@@ -48,9 +46,9 @@ const saveFilteredEntries = () => {
 }
 
 saveFilteredEntries()
-  .then(() => zipDirectory('./_temp', 'archive.zip'))
-  .then(() => rimrafAsync('./_temp'))
-  .then(() => uploadToMultipleBuckets(['test-task-bucket-2', 'test-task-bucket-3'], './archive.zip'))
-  .then(() => rimrafAsync('./archive.zip'))
+  .then(() => zipDirectory(CONSTANTS.TEMP_FOLDER_PATH, CONSTANTS.FILE_KEY))
+  .then(() => rimrafAsync(CONSTANTS.TEMP_FOLDER_PATH))
+  .then(() => uploadToMultipleBuckets([CONSTANTS.SECOND_BUCKET_NAME, CONSTANTS.THIRD_BUCKET_NAME], CONSTANTS.FILE_KEY))
+  .then(() => rimrafAsync(CONSTANTS.FILE_KEY))
   .catch(err => console.log(err));
 
