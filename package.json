@@ -1,0 +1,28 @@
+{
+  "name": "aws-test-assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "test": "npm run test",
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^3.1.1",
+    "aws-sdk": "^2.571.0",
+    "rimraf": "^3.0.0",
+    "unzip-stream": "^0.3.0",
+    "zip-a-folder": "0.0.9",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/archiver": "^3.0.0",
+    "@types/node": "^12.12.7",
+    "@types/rimraf": "^2.0.3",
+    "typescript": "^3.7.2"
+  }
+}
